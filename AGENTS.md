@@ -21,6 +21,18 @@ The hub should support:
 4. integrations with Microsoft 365 data that the student explicitly authorizes
 5. eventual reuse of the same backend and shared packages for Android and iOS apps
 
+## Confirmed v1 product shape
+
+The initial product experience is now defined as:
+
+1. the student signs in through Office 365 using their UNSW Microsoft account
+2. after authentication, the application shows a launcher-style home screen
+3. the home screen presents icons for each approved third-party or university service
+4. each icon opens the corresponding external service as an authenticated launch site or quick link
+5. v1 prioritizes launch sites and quick links over deep data sync
+
+For v1, optimize for a clean, fast app-launcher experience rather than a complex dashboard.
+
 ## Product assumptions and scope boundaries
 
 - Prefer official APIs, official SDKs, and supported SSO flows over scraping
@@ -82,11 +94,8 @@ Implementation guidance:
 
 Initial Microsoft 365 features that are reasonable to explore first:
 
-- basic profile and identity
-- calendar summary
-- email summary or unread counts
-- OneDrive or file shortcuts
-- Teams or meeting shortcuts
+- identity and session management needed for Office 365 sign-in
+- lightweight profile display if available after sign-in
 
 Avoid requesting broad or admin-sensitive scopes until the exact feature requires them.
 
@@ -143,6 +152,8 @@ For both systems, the first implementation pass should likely provide:
 2. metadata cards or quick links if official APIs are available
 3. no embedded automation or scraping without explicit approval
 
+The launcher UI should use recognizable service icons and concise labels so the student can reach each system with minimal friction.
+
 ## Research findings that should guide implementation
 
 The current default direction is informed by the following practical considerations:
@@ -178,14 +189,21 @@ If the user provides Microsoft 365 access, treat it as sensitive production-grad
 
 If there is a choice, use Azure Key Vault or another managed secret store rather than local files.
 
+If a secret has been configured in Cursor for this project:
+
+- access it only through the injected environment at runtime
+- never print the secret value to logs or terminal output
+- never copy it into source files, `.env.example`, documentation, screenshots, or commits
+- prefer using it only for local development, app registration setup, or integration testing that explicitly requires it
+
 ## Immediate product discovery questions
 
 These questions should be resolved early because they affect architecture and permissions:
 
 1. Which UNSW systems matter most in the first version?
 2. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant?
-3. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or all of them?
-4. For `WebCMS3` and `Moodle`, should v1 aim for launch links first, or do you want deeper data integration immediately?
+3. Beyond Office 365 sign-in, do you want any Microsoft 365 data shown in v1, or should v1 stay focused on launch icons only?
+4. Should `WebCMS3` and `Moodle` remain launch links only in v1, with deeper integration deferred to later phases?
 5. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
 
 ## Cursor Cloud specific instructions
