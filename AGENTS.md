@@ -21,18 +21,6 @@ The hub should support:
 4. integrations with Microsoft 365 data that the student explicitly authorizes
 5. eventual reuse of the same backend and shared packages for Android and iOS apps
 
-## Confirmed v1 product shape
-
-The initial product experience is now defined as:
-
-1. the student signs in through Office 365 using their UNSW Microsoft account
-2. after authentication, the application shows a launcher-style home screen
-3. the home screen presents icons for each approved third-party or university service
-4. each icon opens the corresponding external service as an authenticated launch site or quick link
-5. v1 prioritizes launch sites and quick links over deep data sync
-
-For v1, optimize for a clean, fast app-launcher experience rather than a complex dashboard.
-
 ## Product assumptions and scope boundaries
 
 - Prefer official APIs, official SDKs, and supported SSO flows over scraping
@@ -94,8 +82,11 @@ Implementation guidance:
 
 Initial Microsoft 365 features that are reasonable to explore first:
 
-- identity and session management needed for Office 365 sign-in
-- lightweight profile display if available after sign-in
+- basic profile and identity
+- calendar summary
+- email summary or unread counts
+- OneDrive or file shortcuts
+- Teams or meeting shortcuts
 
 Avoid requesting broad or admin-sensitive scopes until the exact feature requires them.
 
@@ -124,36 +115,6 @@ Maintain an integration register once the product starts. For each external syst
 
 Do not scrape authenticated third-party student systems unless the user explicitly asks for it and the legal, technical, and security implications are clear.
 
-## Initial known target integrations
-
-The first known non-Microsoft systems to plan around are:
-
-1. `https://webcms3.cse.unsw.edu.au/`
-2. `https://moodle.telt.unsw.edu.au/`
-
-Initial integration assumptions:
-
-- `WebCMS3` should be treated as a high-priority UNSW academic system for course content and course operations.
-- `Moodle` should be treated as a high-priority UNSW learning platform for course resources, submissions, and teaching workflows.
-
-Initial classification guidance until real access is tested:
-
-- `WebCMS3`: default to `deep-link or external launch only` unless an official API, supported SSO path, or explicit permission for deeper integration is confirmed.
-- `Moodle`: investigate both `official API integration` and `Microsoft Entra ID SSO launch integration`, but do not assume UNSW has enabled the necessary Microsoft login or Moodle web service capabilities until verified.
-
-Initial research notes:
-
-- Publicly visible information suggests `WebCMS3` uses direct `zID` / `zPass` sign-in and does not expose obvious public API documentation.
-- Moodle as a platform can support Microsoft-based authentication and integration, but UNSW-specific enablement and available APIs still need verification.
-
-For both systems, the first implementation pass should likely provide:
-
-1. authenticated launch tiles from the hub
-2. metadata cards or quick links if official APIs are available
-3. no embedded automation or scraping without explicit approval
-
-The launcher UI should use recognizable service icons and concise labels so the student can reach each system with minimal friction.
-
 ## Research findings that should guide implementation
 
 The current default direction is informed by the following practical considerations:
@@ -162,7 +123,6 @@ The current default direction is informed by the following practical considerati
 - Microsoft Graph integrations should follow delegated permissions, least privilege, and throttling-aware retries
 - Expo now has first-class monorepo support with `pnpm`, which makes a future mobile app compatible with a shared web/mobile repository structure
 - Native mobile Microsoft auth needs an early proof of concept, so the web application should be the first production target and the backend API should remain platform-neutral
-- Based on initial public research, `WebCMS3` and `Moodle` should be planned as separate integration tracks rather than assumed to be directly backed by the same Microsoft 365 APIs
 
 ## MCP recommendations
 
@@ -189,21 +149,14 @@ If the user provides Microsoft 365 access, treat it as sensitive production-grad
 
 If there is a choice, use Azure Key Vault or another managed secret store rather than local files.
 
-If a secret has been configured in Cursor for this project:
-
-- access it only through the injected environment at runtime
-- never print the secret value to logs or terminal output
-- never copy it into source files, `.env.example`, documentation, screenshots, or commits
-- prefer using it only for local development, app registration setup, or integration testing that explicitly requires it
-
 ## Immediate product discovery questions
 
 These questions should be resolved early because they affect architecture and permissions:
 
 1. Which UNSW systems matter most in the first version?
 2. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant?
-3. Beyond Office 365 sign-in, do you want any Microsoft 365 data shown in v1, or should v1 stay focused on launch icons only?
-4. Should `WebCMS3` and `Moodle` remain launch links only in v1, with deeper integration deferred to later phases?
+3. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or all of them?
+4. Which third-party systems should be integrated through API versus simple launch links?
 5. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
 
 ## Cursor Cloud specific instructions
