@@ -115,6 +115,34 @@ Maintain an integration register once the product starts. For each external syst
 
 Do not scrape authenticated third-party student systems unless the user explicitly asks for it and the legal, technical, and security implications are clear.
 
+## Initial known target integrations
+
+The first known non-Microsoft systems to plan around are:
+
+1. `https://webcms3.cse.unsw.edu.au/`
+2. `https://moodle.telt.unsw.edu.au/`
+
+Initial integration assumptions:
+
+- `WebCMS3` should be treated as a high-priority UNSW academic system for course content and course operations.
+- `Moodle` should be treated as a high-priority UNSW learning platform for course resources, submissions, and teaching workflows.
+
+Initial classification guidance until real access is tested:
+
+- `WebCMS3`: default to `deep-link or external launch only` unless an official API, supported SSO path, or explicit permission for deeper integration is confirmed.
+- `Moodle`: investigate both `official API integration` and `Microsoft Entra ID SSO launch integration`, but do not assume UNSW has enabled the necessary Microsoft login or Moodle web service capabilities until verified.
+
+Initial research notes:
+
+- Publicly visible information suggests `WebCMS3` uses direct `zID` / `zPass` sign-in and does not expose obvious public API documentation.
+- Moodle as a platform can support Microsoft-based authentication and integration, but UNSW-specific enablement and available APIs still need verification.
+
+For both systems, the first implementation pass should likely provide:
+
+1. authenticated launch tiles from the hub
+2. metadata cards or quick links if official APIs are available
+3. no embedded automation or scraping without explicit approval
+
 ## Research findings that should guide implementation
 
 The current default direction is informed by the following practical considerations:
@@ -123,6 +151,7 @@ The current default direction is informed by the following practical considerati
 - Microsoft Graph integrations should follow delegated permissions, least privilege, and throttling-aware retries
 - Expo now has first-class monorepo support with `pnpm`, which makes a future mobile app compatible with a shared web/mobile repository structure
 - Native mobile Microsoft auth needs an early proof of concept, so the web application should be the first production target and the backend API should remain platform-neutral
+- Based on initial public research, `WebCMS3` and `Moodle` should be planned as separate integration tracks rather than assumed to be directly backed by the same Microsoft 365 APIs
 
 ## MCP recommendations
 
@@ -156,7 +185,7 @@ These questions should be resolved early because they affect architecture and pe
 1. Which UNSW systems matter most in the first version?
 2. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant?
 3. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or all of them?
-4. Which third-party systems should be integrated through API versus simple launch links?
+4. For `WebCMS3` and `Moodle`, should v1 aim for launch links first, or do you want deeper data integration immediately?
 5. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
 
 ## Cursor Cloud specific instructions
