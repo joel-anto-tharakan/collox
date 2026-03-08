@@ -7,7 +7,7 @@
 - Primary users: students of the University of New South Wales (UNSW)
 - Primary identity provider: Microsoft 365 / Microsoft Entra ID via `unsw.edu.au` accounts
 - Goal: provide one authenticated hub where a student can view and launch the different systems, information sources, and services they use
-- Current state: greenfield repository with only `README.md`, `LICENSE`, and this file
+- Current state: initial TypeScript monorepo with a Next.js web app, shared types, and shared config
 
 ## Product intent
 
@@ -62,6 +62,17 @@ Keep the first real implementation minimal, but steer toward this shape:
 - `packages/ui` only after a real need for reusable UI emerges
 
 Share business logic, types, validation schemas, API clients, and design tokens first. Do not over-invest in cross-platform shared UI before the web product is proven.
+
+## Current implemented layout
+
+The repository now includes:
+
+- `apps/web` for the initial Next.js web application
+- `packages/types` for shared TypeScript contracts and initial product content
+- `packages/config` for shared TypeScript configuration
+- root `pnpm` workspace and `turborepo` orchestration
+
+This is still an early implementation. No backend, database, mobile app, or live Microsoft auth flow exists yet.
 
 ## Microsoft 365 integration guidance
 
@@ -161,14 +172,21 @@ These questions should be resolved early because they affect architecture and pe
 
 ## Cursor Cloud specific instructions
 
-This repository still does not have an implemented application stack yet.
+This repository now has a small implemented application stack.
 
-- No dependency manifests exist yet.
-- No source directories exist yet.
-- No services exist yet.
-- No test, lint, format, or build tooling is configured yet.
+- Package manager: `pnpm`
+- Workspace orchestration: `turborepo`
+- Web app: `apps/web` with Next.js App Router and TypeScript
+- Shared packages: `packages/types`, `packages/config`
 
-Because of that, agents must not claim commands or tooling exist until they actually add and configure them.
+Available root commands:
+
+1. `pnpm install`
+2. `pnpm dev`
+3. `pnpm lint`
+4. `pnpm typecheck`
+5. `pnpm test`
+6. `pnpm build`
 
 When the first implementation is created:
 
@@ -180,7 +198,12 @@ When the first implementation is created:
 
 ## Current testing guidance
 
-Right now there are no configured automated checks. For documentation-only changes, manual review is sufficient.
+Current automated checks:
+
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test`
+- `pnpm build`
 
 If agents add application code or tooling, they should also add and run the smallest relevant validation for that stack, such as:
 

@@ -1,0 +1,9 @@
+node_modules
+.pnpm-store
+.turbo
+coverage
+.env
+.env.*
+*.tsbuildinfo
+**/.next
+**/coverage
