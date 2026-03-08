@@ -3,36 +3,186 @@
 ## Repository overview
 
 - Repository name: `collox`
-- License: MIT
-- Current state: greenfield repository
-- Current top-level files: `README.md`, `LICENSE`, and this `AGENTS.md`
+- Product direction: build a web-first UNSW student hub, then expand to Android and iOS apps
+- Primary users: students of the University of New South Wales (UNSW)
+- Primary identity provider: Microsoft 365 / Microsoft Entra ID via `unsw.edu.au` accounts
+- Goal: provide one authenticated hub where a student can view and launch the different systems, information sources, and services they use
+- Current state: greenfield repository with only `README.md`, `LICENSE`, and this file
+
+## Product intent
+
+The product should become an integrated student hub for UNSW. The website comes first. Native mobile apps come later, but the architecture should be chosen so the mobile apps can reuse business logic, data models, API contracts, and design decisions as much as practical.
+
+The hub should support:
+
+1. sign-in with the student's UNSW Microsoft 365 account
+2. a personalized dashboard for the student's most important information
+3. a launchpad for UNSW systems and approved third-party systems
+4. integrations with Microsoft 365 data that the student explicitly authorizes
+5. eventual reuse of the same backend and shared packages for Android and iOS apps
+
+## Product assumptions and scope boundaries
+
+- Prefer official APIs, official SDKs, and supported SSO flows over scraping
+- Prefer link-out or deep-link launchers for systems that do not expose suitable APIs
+- Do not store a student's raw Microsoft password in the repository, source code, or plaintext local files
+- Do not assume every third-party service can be embedded; some may only support SSO and external launch
+- Do not assume tenant-wide admin consent is available until the user confirms it
+
+## Recommended technical direction
+
+When application code is introduced, default to a single TypeScript monorepo:
+
+- workspace management: `pnpm` workspaces
+- task orchestration and caching: `turborepo`
+- web app: `Next.js` with TypeScript and App Router
+- future mobile app: `Expo` / React Native with TypeScript
+- backend API: `NestJS` with TypeScript
+- database: `PostgreSQL`
+- ORM and schema management: `Prisma`
+- client-side server-state fetching: `TanStack Query`
+
+This stack is preferred because:
+
+- it keeps web, mobile, and backend on one language
+- Next.js is a strong default for a web-first product
+- Expo provides a practical path to Android and iOS later
+- NestJS is a good fit for structured integrations, background jobs, and auth-heavy backend work
+- PostgreSQL and Prisma are stable defaults for user settings, cached metadata, and integration state
+
+## Proposed repository layout once implementation begins
+
+Keep the first real implementation minimal, but steer toward this shape:
+
+- `apps/web` for the Next.js web application
+- `apps/api` for the NestJS backend
+- `apps/mobile` for the future Expo app
+- `packages/types` for shared types and API contracts
+- `packages/config` for shared TypeScript, lint, and tooling config
+- `packages/ui` only after a real need for reusable UI emerges
+
+Share business logic, types, validation schemas, API clients, and design tokens first. Do not over-invest in cross-platform shared UI before the web product is proven.
+
+## Microsoft 365 integration guidance
+
+For identity and Microsoft data access, prefer:
+
+- Microsoft Entra ID for authentication
+- MSAL for client authentication flows
+- Microsoft Graph for Microsoft 365 APIs
+
+Implementation guidance:
+
+1. Start with delegated permissions, not application permissions, unless a background service truly requires app-level access.
+2. Request the minimum scopes needed for a feature.
+3. Use incremental consent rather than asking for every permission upfront.
+4. For web, prefer standard Entra ID OAuth 2.0 / OpenID Connect flows with PKCE.
+5. Use Microsoft Graph best practices, including throttling-aware retries and honoring `Retry-After`.
+6. Test Graph calls in a constrained, feature-by-feature way instead of enabling broad permissions early.
+
+Initial Microsoft 365 features that are reasonable to explore first:
+
+- basic profile and identity
+- calendar summary
+- email summary or unread counts
+- OneDrive or file shortcuts
+- Teams or meeting shortcuts
+
+Avoid requesting broad or admin-sensitive scopes until the exact feature requires them.
+
+## Third-party website integration guidance
+
+The hub should also help students reach third-party systems that can be accessed with the same UNSW Microsoft 365 identity.
+
+For each target system, agents should classify the integration as one of:
+
+1. official API integration
+2. Microsoft Entra ID SSO launch integration
+3. deep-link or external launch only
+4. unsupported until legal, technical, or security approval exists
+
+Maintain an integration register once the product starts. For each external system, track:
+
+- system name
+- business purpose
+- API availability
+- auth method
+- SSO compatibility
+- owner or support contact
+- rate limits
+- terms of use constraints
+- whether the system should be embedded, proxied, or linked out
+
+Do not scrape authenticated third-party student systems unless the user explicitly asks for it and the legal, technical, and security implications are clear.
+
+## Research findings that should guide implementation
+
+The current default direction is informed by the following practical considerations:
+
+- Microsoft strongly supports web authentication with Entra ID, MSAL, and Microsoft Graph
+- Microsoft Graph integrations should follow delegated permissions, least privilege, and throttling-aware retries
+- Expo now has first-class monorepo support with `pnpm`, which makes a future mobile app compatible with a shared web/mobile repository structure
+- Native mobile Microsoft auth needs an early proof of concept, so the web application should be the first production target and the backend API should remain platform-neutral
+
+## MCP recommendations
+
+No MCP servers are configured in this repository yet. The following MCPs are recommended for this project:
+
+1. GitHub MCP for repository, PR, issue, and CI inspection
+2. Browser automation or Playwright MCP for end-to-end testing of the web app
+3. Documentation-search MCP focused on Microsoft Learn, Next.js, Expo, and Prisma docs
+4. A custom Microsoft Graph MCP server for safe schema discovery, test queries, and integration prototyping
+5. An Azure or Entra-focused MCP, if available, for app registrations, tenant configuration visibility, and auth setup guidance
+6. A Postgres MCP once the database exists, to inspect schema and validate data safely
+
+If only one custom MCP is added early, prioritize the Microsoft Graph MCP because Microsoft 365 integration is central to the product.
+
+## Secure handling of Microsoft 365 access
+
+If the user provides Microsoft 365 access, treat it as sensitive production-grade access:
+
+- never commit credentials, tokens, secrets, cookies, or exported session data
+- prefer a dedicated test account or app registration over the user's personal password
+- prefer OAuth app registration credentials and delegated sign-in over sharing raw credentials
+- store secrets only in a secure secret manager or environment-injected secret store
+- rotate or revoke credentials after setup or testing if they were shared temporarily
+
+If there is a choice, use Azure Key Vault or another managed secret store rather than local files.
+
+## Immediate product discovery questions
+
+These questions should be resolved early because they affect architecture and permissions:
+
+1. Which UNSW systems matter most in the first version?
+2. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant?
+3. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or all of them?
+4. Which third-party systems should be integrated through API versus simple launch links?
+5. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
 
 ## Cursor Cloud specific instructions
 
-This repository does not have an application stack yet.
+This repository still does not have an implemented application stack yet.
 
 - No dependency manifests exist yet.
 - No source directories exist yet.
 - No services exist yet.
 - No test, lint, format, or build tooling is configured yet.
 
-Because of that, agents should not assume any language, framework, package manager, or runtime commands are available unless they add them as part of the task.
+Because of that, agents must not claim commands or tooling exist until they actually add and configure them.
 
-## Working agreement for future agents
+When the first implementation is created:
 
-When implementing the first real features in this repository:
-
-1. Keep the initial structure minimal and easy to understand.
-2. Prefer a single clearly chosen stack instead of adding multiple overlapping tools.
-3. Add only the dependencies needed for the requested task.
-4. Create standard scripts or commands for build, test, lint, and local run as soon as tooling exists.
-5. Update both `README.md` and this file when project setup instructions become concrete.
+1. Keep the initial scaffolding small and easy to understand.
+2. Follow the recommended stack above unless the user explicitly changes direction.
+3. Add only dependencies required for the requested slice of functionality.
+4. Add standard commands for local dev, test, lint, and build as soon as tooling exists.
+5. Update both `README.md` and this file with exact setup and run instructions.
 
 ## Current testing guidance
 
 Right now there are no configured automated checks. For documentation-only changes, manual review is sufficient.
 
-If you add application code or tooling, you should also add and run the smallest relevant validation for that stack, such as:
+If agents add application code or tooling, they should also add and run the smallest relevant validation for that stack, such as:
 
 - a targeted test command
 - a lint or typecheck command
@@ -40,19 +190,14 @@ If you add application code or tooling, you should also add and run the smallest
 
 Do not claim commands exist until they are actually configured in the repository.
 
-## Required follow-up when the stack is introduced
+For future implementation work:
 
-As soon as this repository gains a real stack, replace this placeholder guidance with concrete instructions for:
-
-- install/setup
-- local development run steps
-- test commands
-- lint/format commands
-- build/package commands
-- any required environment variables or local services
+- web UI changes should be tested in a browser
+- auth and Microsoft Graph changes should be validated with the smallest possible set of scopes
+- mobile support should not be claimed until validated in an emulator, simulator, or device workflow
 
 ## Notes for repository changes
 
 - Prefer small, focused commits.
-- Avoid adding unrelated scaffolding unless the task requires it.
+- Avoid unrelated scaffolding unless the task requires it.
 - If a task introduces a new convention or project layout, document it here so later agents can follow it consistently.
