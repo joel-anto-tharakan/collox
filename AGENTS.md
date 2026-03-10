@@ -72,7 +72,7 @@ The repository now includes:
 - `packages/config` for shared TypeScript configuration
 - root `pnpm` workspace and `turborepo` orchestration
 
-This is still an early implementation. No backend, database, mobile app, or live Microsoft auth flow exists yet.
+This is still an early implementation. No backend, database, or mobile app exists yet. The web app now includes a Microsoft Entra auth foundation, but it still requires app registration credentials before live sign-in can succeed.
 
 ## Microsoft 365 integration guidance
 
@@ -178,6 +178,7 @@ This repository now has a small implemented application stack.
 - Workspace orchestration: `turborepo`
 - Web app: `apps/web` with Next.js App Router and TypeScript
 - Shared packages: `packages/types`, `packages/config`
+- Auth foundation: Auth.js with Microsoft Entra ID provider and App Router route handlers
 
 Available root commands:
 
@@ -187,6 +188,10 @@ Available root commands:
 4. `pnpm typecheck`
 5. `pnpm test`
 6. `pnpm build`
+
+Auth-specific environment file:
+
+- `apps/web/.env.local` based on `apps/web/.env.example`
 
 When the first implementation is created:
 
@@ -204,6 +209,13 @@ Current automated checks:
 - `pnpm typecheck`
 - `pnpm test`
 - `pnpm build`
+
+Current auth guidance for this repository:
+
+- use Microsoft Entra ID through standard OAuth 2.0 / OpenID Connect
+- redirect users to Microsoft login at `login.microsoftonline.com`; do not attempt to reuse Office cookies
+- store `collox` session state in an encrypted HttpOnly app-owned cookie until a database-backed session strategy is introduced
+- do not claim live sign-in works unless the Entra app registration values are configured and tested
 
 If agents add application code or tooling, they should also add and run the smallest relevant validation for that stack, such as:
 

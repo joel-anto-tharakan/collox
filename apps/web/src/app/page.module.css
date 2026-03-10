@@ -47,6 +47,17 @@
   gap: 20px;
 }
 
+.sessionActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sessionLabel {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .loginButton {
   display: inline-flex;
   align-items: center;
@@ -63,6 +74,14 @@
     transform 150ms ease,
     box-shadow 150ms ease,
     background 150ms ease;
+}
+
+.plainButton {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
 }
 
 .hero {
@@ -380,6 +399,10 @@
     color: var(--accent);
   }
 
+  .plainButton:hover {
+    color: var(--accent);
+  }
+
   .loginButton:hover {
     background: #2a2723;
   }
@@ -393,6 +416,11 @@
   .topActions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .sessionActions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .hero {
@@ -419,6 +447,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
+  }
+
+  .sessionActions {
+    align-items: flex-start;
   }
 
   .heroContent h1 {

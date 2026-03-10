@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
 import {
   architectureSlices,
   dashboardModules,
@@ -6,9 +7,15 @@ import {
   launchpadSystems,
   productPrinciples,
 } from "@collox/types";
+
+import { authOptions } from "@/auth";
+import { SignInButton, SignOutButton } from "@/components/auth-controls";
+import { isMicrosoftAuthConfigured } from "@/lib/auth-env";
 import styles from "./page.module.css";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -23,9 +30,23 @@ export default function Home() {
               <a href="#launchpad">Launchpad</a>
               <a href="#questions">Questions</a>
             </nav>
-            <Link className={styles.loginButton} href="/login">
-              Log in
-            </Link>
+            {session?.user ? (
+              <div className={styles.sessionActions}>
+                <p className={styles.sessionLabel}>
+                  Signed in as {session.user.name ?? session.user.email ?? "student"}
+                </p>
+                <Link className={styles.loginButton} href="/app">
+                  Open hub
+                </Link>
+                <SignOutButton className={styles.plainButton} label="Sign out" />
+              </div>
+            ) : isMicrosoftAuthConfigured ? (
+              <SignInButton className={styles.loginButton} label="Log in" />
+            ) : (
+              <Link className={styles.loginButton} href="/login">
+                Log in
+              </Link>
+            )}
           </div>
         </header>
 

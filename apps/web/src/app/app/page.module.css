@@ -6,15 +6,16 @@
 }
 
 .content {
-  width: min(760px, 100%);
+  width: min(820px, 100%);
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding-top: 80px;
+  padding-top: 72px;
 }
 
 .eyebrow,
-.sectionLabel {
+.sectionLabel,
+.identityCard dt {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -23,29 +24,49 @@
 }
 
 .content h1 {
-  max-width: 10ch;
+  max-width: 12ch;
   font-family: var(--font-newsreader), Georgia, serif;
-  font-size: clamp(3.6rem, 8vw, 6rem);
-  line-height: 0.94;
+  font-size: clamp(3.4rem, 7vw, 5.8rem);
+  line-height: 0.95;
   letter-spacing: -0.06em;
   font-weight: 500;
 }
 
 .lead {
-  max-width: 56ch;
-  font-size: 1.12rem;
-  line-height: 1.8;
+  max-width: 58ch;
   color: var(--muted);
+  line-height: 1.8;
+  font-size: 1.08rem;
+}
+
+.identityCard {
+  display: grid;
+  gap: 18px;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(28, 26, 23, 0.12);
+}
+
+.identityCard div {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(28, 26, 23, 0.08);
+}
+
+.identityCard dd {
+  color: #1c1a17;
+  line-height: 1.6;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 14px;
 }
 
-.primary {
+.primary,
+.secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -53,16 +74,19 @@
   padding: 0 18px;
   border-radius: 999px;
   border: 1px solid rgba(28, 26, 23, 0.14);
-  background: #1c1a17;
-  color: #f7f2e8;
-  font-weight: 600;
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.status {
-  color: var(--muted);
-  font-size: 0.98rem;
+.primary {
+  background: #1c1a17;
+  color: #f7f2e8;
+}
+
+.secondary {
+  background: transparent;
+  color: #1c1a17;
 }
 
 .section {
@@ -87,26 +111,18 @@
   line-height: 1.7;
 }
 
-.list code {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.92rem;
-  color: #1c1a17;
-}
-
 .list li:first-child {
   border-top: 0;
 }
 
-.storageNote {
-  max-width: 58ch;
-  color: var(--muted);
-  line-height: 1.8;
-}
-
 @media (hover: hover) and (pointer: fine) {
-  .primary:hover {
+  .primary:hover,
+  .secondary:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 32px rgba(28, 26, 23, 0.08);
+  }
+
+  .primary:hover {
     background: #2a2723;
   }
 }
