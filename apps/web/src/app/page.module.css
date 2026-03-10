@@ -41,6 +41,30 @@
   color: var(--muted);
 }
 
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.loginButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(28, 26, 23, 0.14);
+  background: #1c1a17;
+  color: #f7f2e8;
+  font-size: 0.94rem;
+  font-weight: 600;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease;
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.8fr);
@@ -345,7 +369,8 @@
 
 @media (hover: hover) and (pointer: fine) {
   .primary:hover,
-  .secondary:hover {
+  .secondary:hover,
+  .loginButton:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 32px rgba(28, 26, 23, 0.08);
   }
@@ -354,11 +379,20 @@
   .topNav a:hover {
     color: var(--accent);
   }
+
+  .loginButton:hover {
+    background: #2a2723;
+  }
 }
 
 @media (max-width: 1000px) {
   .topBar {
     flex-direction: column;
+  }
+
+  .topActions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .hero {
@@ -379,6 +413,12 @@
 @media (max-width: 760px) {
   .page {
     padding: 22px 16px 72px;
+  }
+
+  .topActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
   }
 
   .heroContent h1 {

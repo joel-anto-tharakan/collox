@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   architectureSlices,
   dashboardModules,
@@ -16,11 +17,16 @@ export default function Home() {
             <p className={styles.wordmark}>collox</p>
             <p className={styles.wordmarkMeta}>UNSW student hub / initial web slice</p>
           </div>
-          <nav className={styles.topNav} aria-label="Page sections">
-            <a href="#modules">Modules</a>
-            <a href="#launchpad">Launchpad</a>
-            <a href="#questions">Questions</a>
-          </nav>
+          <div className={styles.topActions}>
+            <nav className={styles.topNav} aria-label="Page sections">
+              <a href="#modules">Modules</a>
+              <a href="#launchpad">Launchpad</a>
+              <a href="#questions">Questions</a>
+            </nav>
+            <Link className={styles.loginButton} href="/login">
+              Log in
+            </Link>
+          </div>
         </header>
 
         <section className={styles.hero}>
