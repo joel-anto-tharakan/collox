@@ -1,9 +1,11 @@
 :root {
-  --background: #f3f7ff;
-  --foreground: #13213b;
-  --surface: rgba(255, 255, 255, 0.84);
-  --surface-strong: #ffffff;
-  --border: rgba(19, 33, 59, 0.12);
+  --background: #f7f2e8;
+  --foreground: #1c1a17;
+  --muted: #5e554c;
+  --surface: #f3ede2;
+  --surface-strong: #fbf7f0;
+  --border: rgba(28, 26, 23, 0.12);
+  --accent: #9b6b43;
 }
 
 html,
@@ -15,8 +17,8 @@ body {
 body {
   color: var(--foreground);
   background:
-    radial-gradient(circle at top, rgba(83, 126, 255, 0.18), transparent 34%),
-    linear-gradient(180deg, #f8fbff 0%, var(--background) 100%);
+    radial-gradient(circle at top, rgba(155, 107, 67, 0.08), transparent 28%),
+    linear-gradient(180deg, #fbf7f0 0%, var(--background) 100%);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,6 +28,10 @@ body {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+::selection {
+  background: rgba(155, 107, 67, 0.18);
 }
 
 a {
