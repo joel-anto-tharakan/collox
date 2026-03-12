@@ -3,23 +3,38 @@
 ## Repository overview
 
 - Repository name: `collox`
-- Product direction: build a web-first UNSW student hub, then expand to Android and iOS apps
+- Product direction: build a local-first UNSW student hub with a clean, simple web experience for phones and laptops first, then expand to Android and iOS apps
 - Primary users: students of the University of New South Wales (UNSW)
-- Preferred v1 identity direction: local-first app-managed auth with minimal stored data and strong mobile-web usability
-- Goal: provide one authenticated hub where a student can view and launch the different systems, information sources, and services they use
+- Preferred v1 identity direction: local-first app-managed auth with minimal stored data and most user data remaining under the student's control
+- Goal: provide one clean, simple authenticated hub where a student can view and launch the different systems, information sources, and services they use
 - Current state: initial TypeScript monorepo with a Next.js web app, shared types, and shared config
 
 ## Product intent
 
-The product should become an integrated student hub for UNSW. The website comes first. Native mobile apps come later, but the architecture should be chosen so the mobile apps can reuse business logic, data models, API contracts, and design decisions as much as practical.
+The product should become an integrated, local-first student hub for UNSW. The website comes first and should be the primary experience on both phones and laptops. Native mobile apps can come later, but the architecture should be chosen so the mobile apps can reuse business logic, data models, API contracts, and design decisions as much as practical.
+
+The product should optimize for:
+
+- minimal server-side data retention
+- keeping students in control of most of their own data and connected accounts
+- clean, simple flows that work for non-technical users
+- responsive, accessible experiences that feel first-class on mobile and desktop
 
 The hub should support:
 
 1. sign-in that works well on the web and mobile web, with optional stronger institutional integrations later
 2. a personalized dashboard for the student's most important information
 3. a launchpad for UNSW systems and approved third-party systems
-4. integrations with Microsoft 365 data that the student explicitly authorizes
+4. optional integrations with Microsoft 365 data that the student explicitly authorizes
 5. eventual reuse of the same backend and shared packages for Android and iOS apps
+
+## Core product principles
+
+- Default to local-first designs that keep the product useful even when little user data is stored centrally.
+- Store only the minimum server-side data required to provide the feature safely and reliably.
+- Prefer simple, low-friction experiences over feature-dense workflows that assume technical expertise.
+- Design every primary flow to work well on both phones and laptops.
+- Use clear language, obvious actions, and minimal setup wherever possible.
 
 ## Product assumptions and scope boundaries
 
@@ -29,7 +44,9 @@ The hub should support:
 - Do not assume every third-party service can be embedded; some may only support SSO and external launch
 - Do not assume tenant-wide admin consent is available until the user confirms it
 - Prefer local-first architecture for the public product and store the least amount of user data practical
-- Design the web experience to work well on phones before native apps exist
+- Keep as much user data as practical on the user's own device or in user-controlled third-party accounts
+- Design the web experience to work well on both phones and laptops before native apps exist
+- Assume many users are non-technical and avoid flows that require complex setup or jargon
 
 ## Recommended technical direction
 
@@ -74,7 +91,7 @@ The repository now includes:
 - `packages/config` for shared TypeScript configuration
 - root `pnpm` workspace and `turborepo` orchestration
 
-This is still an early implementation. No backend or mobile app exists yet. The current web direction should bias toward local-first auth, minimal retained data, and strong mobile-web usability.
+This is still an early implementation. No backend or mobile app exists yet. The current web direction should bias toward local-first auth, minimal retained data, simple UX for non-technical users, and strong usability on both mobile and desktop.
 
 ## Identity and Microsoft integration guidance
 
@@ -136,10 +153,13 @@ For this repository's current direction:
 
 - prefer self-hosted or app-managed auth over enterprise identity dependencies when practical
 - store only the minimum auth and session data needed to operate the product
+- keep as much user-specific data as practical on the user's device or in user-controlled external services
 - default to app-owned secure cookies for session state
 - avoid persisting user productivity data unless a feature explicitly requires it
-- keep mobile web as a first-class target for layout, interaction, and authentication flows
+- keep mobile web and desktop web as first-class targets for layout, interaction, and authentication flows
 - prefer low-friction mobile-friendly methods such as passkeys or magic links over password-heavy flows when practical
+- prioritize clean, simple interfaces that non-technical students can understand without training
+- reduce setup steps, technical language, and configuration burden wherever possible
 
 ## Research findings that should guide implementation
 
@@ -180,10 +200,12 @@ If there is a choice, use Azure Key Vault or another managed secret store rather
 These questions should be resolved early because they affect architecture and permissions:
 
 1. Which UNSW systems matter most in the first version?
-2. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant?
-3. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or all of them?
-4. Which third-party systems should be integrated through API versus simple launch links?
-5. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
+2. Which data truly needs to be stored by the product, and which data should remain on the student's device or in connected services?
+3. Which primary student tasks must feel effortless on both phone and laptop in v1?
+4. Does the user have access to create or approve a Microsoft Entra app registration for the relevant tenant if Microsoft features are reintroduced?
+5. Which Microsoft 365 features are in scope for v1: profile, mail, calendar, files, Teams, or none initially?
+6. Which third-party systems should be integrated through API versus simple launch links?
+7. Are there university branding, privacy, accessibility, or data residency constraints that affect hosting?
 
 ## Cursor Cloud specific instructions
 
@@ -194,6 +216,7 @@ This repository now has a small implemented application stack.
 - Web app: `apps/web` with Next.js App Router and TypeScript
 - Shared packages: `packages/types`, `packages/config`
 - Auth direction: local-first app-managed auth with minimal retained data
+- UX direction: simple, clear flows for non-technical users on mobile and desktop
 
 Available root commands:
 
@@ -229,7 +252,7 @@ Current auth guidance for this repository:
 
 - prefer local-first auth that stores the least amount of user data practical
 - keep session state in secure app-owned cookies
-- keep any auth UX simple enough for mobile-web use
+- keep any auth UX simple enough for non-technical users on mobile and desktop
 - only use Microsoft Entra ID if the user explicitly reintroduces official Microsoft 365 identity requirements
 
 If agents add application code or tooling, they should also add and run the smallest relevant validation for that stack, such as:
@@ -242,8 +265,9 @@ Do not claim commands exist until they are actually configured in the repository
 
 For future implementation work:
 
-- web UI changes should be tested in a browser
+- web UI changes should be tested in a browser on mobile-width and desktop-width layouts
 - auth and Microsoft Graph changes should be validated with the smallest possible set of scopes
+- core user flows should be checked for clarity and simplicity, not only technical correctness
 - mobile support should not be claimed until validated in an emulator, simulator, or device workflow
 
 ## Notes for repository changes
