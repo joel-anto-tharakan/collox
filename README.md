@@ -12,9 +12,9 @@ This repository now includes the first implementation slice:
 - `packages/config`: shared TypeScript configuration presets
 - root workspace tooling with `pnpm` workspaces and `turborepo`
 
-The current web app is an initial product-direction landing page. It does not
-yet include Microsoft Graph data fetching or backend APIs, but it now includes
-the first Microsoft Entra sign-in foundation.
+The current web app is an initial product-direction landing page with a
+local-first authentication foundation. It does not yet include backend APIs,
+deep third-party integrations, or Microsoft Graph data fetching.
 
 ## Getting started
 
@@ -33,31 +33,24 @@ Run the web app in development:
 
 Open `http://localhost:3000`.
 
-## Microsoft login setup
+## Local auth setup
 
-The web app now uses Auth.js with the Microsoft Entra ID provider.
+The web app now uses Better Auth with a local SQLite database and secure
+app-owned session cookies.
 
 1. Copy `apps/web/.env.example` to `apps/web/.env.local`
-2. Create a Microsoft Entra app registration
-3. Add this redirect URI:
-   - `http://localhost:3000/api/auth/callback/azure-ad`
-4. Fill these environment variables:
-   - `AUTH_SECRET`
-   - `AUTH_MICROSOFT_ENTRA_ID_ID`
-   - `AUTH_MICROSOFT_ENTRA_ID_SECRET`
-   - `AUTH_MICROSOFT_ENTRA_ID_ISSUER`
-
-Recommended issuer values:
-
-- single tenant: `https://login.microsoftonline.com/<tenant-id>/v2.0`
-- work/school accounts: `https://login.microsoftonline.com/organizations/v2.0`
-- multi-tenant including personal Microsoft accounts: `https://login.microsoftonline.com/common/v2.0`
+2. Fill these environment variables:
+   - `BETTER_AUTH_SECRET`
+   - `BETTER_AUTH_URL`
+3. Create the local auth schema:
+   - `pnpm --filter @collox/web run auth:migrate`
 
 Storage strategy:
 
-- do not reuse Office browser cookies
-- let Microsoft handle login at `login.microsoftonline.com`
-- let `collox` store its own encrypted HttpOnly Auth.js session cookie
+- store only the minimum auth data needed: name, email, password hash, and sessions
+- keep session state in secure app-owned cookies
+- keep the SQLite auth database local to the web app
+- do not store Microsoft or Office cookies or synced productivity data by default
 
 ## Validation commands
 
@@ -70,7 +63,7 @@ Storage strategy:
 
 The first screen intentionally stays honest about scope:
 
-- Microsoft sign-in is scaffolded, but needs Entra app registration values to run live
+- local auth is implemented first so the public project stays lightweight
 - dashboard modules are summary-first
 - launchpad integrations are classified as assumptions to validate
 - discovery questions are surfaced directly in the UI
@@ -78,6 +71,6 @@ The first screen intentionally stays honest about scope:
 ## Next implementation priorities
 
 1. Confirm the first UNSW systems to support in the launchpad
-2. Provide or create a Microsoft Entra app registration for local and deployed environments
-3. Fetch the first authenticated Microsoft Graph slice, likely profile or calendar summary
-4. Add backend persistence once a database exists
+2. Decide whether passkeys, magic links, or both should be the next auth upgrade
+3. Add mobile-web polish and PWA behavior to the authenticated flow
+4. Fetch only the first user-approved data slice once a real integration is worth the extra storage

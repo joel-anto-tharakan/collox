@@ -7,16 +7,18 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "auth:migrate": "better-auth migrate --config src/lib/auth.ts --yes"
   },
   "dependencies": {
     "@collox/types": "workspace:*",
+    "better-auth": "^1.5.5",
     "next": "16.1.6",
-    "next-auth": "^4.24.13",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@better-auth/cli": "^1.4.21",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

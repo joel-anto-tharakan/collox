@@ -5,7 +5,7 @@
 - Repository name: `collox`
 - Product direction: build a web-first UNSW student hub, then expand to Android and iOS apps
 - Primary users: students of the University of New South Wales (UNSW)
-- Primary identity provider: Microsoft 365 / Microsoft Entra ID via `unsw.edu.au` accounts
+- Preferred v1 identity direction: local-first app-managed auth with minimal stored data and strong mobile-web usability
 - Goal: provide one authenticated hub where a student can view and launch the different systems, information sources, and services they use
 - Current state: initial TypeScript monorepo with a Next.js web app, shared types, and shared config
 
@@ -15,7 +15,7 @@ The product should become an integrated student hub for UNSW. The website comes 
 
 The hub should support:
 
-1. sign-in with the student's UNSW Microsoft 365 account
+1. sign-in that works well on the web and mobile web, with optional stronger institutional integrations later
 2. a personalized dashboard for the student's most important information
 3. a launchpad for UNSW systems and approved third-party systems
 4. integrations with Microsoft 365 data that the student explicitly authorizes
@@ -28,6 +28,8 @@ The hub should support:
 - Do not store a student's raw Microsoft password in the repository, source code, or plaintext local files
 - Do not assume every third-party service can be embedded; some may only support SSO and external launch
 - Do not assume tenant-wide admin consent is available until the user confirms it
+- Prefer local-first architecture for the public product and store the least amount of user data practical
+- Design the web experience to work well on phones before native apps exist
 
 ## Recommended technical direction
 
@@ -72,26 +74,28 @@ The repository now includes:
 - `packages/config` for shared TypeScript configuration
 - root `pnpm` workspace and `turborepo` orchestration
 
-This is still an early implementation. No backend, database, or mobile app exists yet. The web app now includes a Microsoft Entra auth foundation, but it still requires app registration credentials before live sign-in can succeed.
+This is still an early implementation. No backend or mobile app exists yet. The current web direction should bias toward local-first auth, minimal retained data, and strong mobile-web usability.
 
-## Microsoft 365 integration guidance
+## Identity and Microsoft integration guidance
 
 For identity and Microsoft data access, prefer:
 
-- Microsoft Entra ID for authentication
+- local-first app-managed auth for the initial public product unless the user explicitly requires institutional Microsoft sign-in
+- Microsoft Entra ID only when the product explicitly needs official UNSW Microsoft 365 identity or delegated Microsoft Graph access
 - MSAL for client authentication flows
 - Microsoft Graph for Microsoft 365 APIs
 
 Implementation guidance:
 
-1. Start with delegated permissions, not application permissions, unless a background service truly requires app-level access.
-2. Request the minimum scopes needed for a feature.
-3. Use incremental consent rather than asking for every permission upfront.
-4. For web, prefer standard Entra ID OAuth 2.0 / OpenID Connect flows with PKCE.
-5. Use Microsoft Graph best practices, including throttling-aware retries and honoring `Retry-After`.
-6. Test Graph calls in a constrained, feature-by-feature way instead of enabling broad permissions early.
+1. Start with local-first auth and secure app-owned sessions when official Microsoft identity is not strictly required.
+2. If Microsoft identity is required, start with delegated permissions, not application permissions, unless a background service truly requires app-level access.
+3. Request the minimum scopes needed for a feature.
+4. Use incremental consent rather than asking for every permission upfront.
+5. For web, prefer standard Entra ID OAuth 2.0 / OpenID Connect flows with PKCE.
+6. Use Microsoft Graph best practices, including throttling-aware retries and honoring `Retry-After`.
+7. Test Graph calls in a constrained, feature-by-feature way instead of enabling broad permissions early.
 
-Initial Microsoft 365 features that are reasonable to explore first:
+Initial Microsoft 365 features that are reasonable to explore first once Microsoft integration is reintroduced:
 
 - basic profile and identity
 - calendar summary
@@ -126,14 +130,25 @@ Maintain an integration register once the product starts. For each external syst
 
 Do not scrape authenticated third-party student systems unless the user explicitly asks for it and the legal, technical, and security implications are clear.
 
+## Public product and mobile-web guidance
+
+For this repository's current direction:
+
+- prefer self-hosted or app-managed auth over enterprise identity dependencies when practical
+- store only the minimum auth and session data needed to operate the product
+- default to app-owned secure cookies for session state
+- avoid persisting user productivity data unless a feature explicitly requires it
+- keep mobile web as a first-class target for layout, interaction, and authentication flows
+- prefer low-friction mobile-friendly methods such as passkeys or magic links over password-heavy flows when practical
+
 ## Research findings that should guide implementation
 
 The current default direction is informed by the following practical considerations:
 
-- Microsoft strongly supports web authentication with Entra ID, MSAL, and Microsoft Graph
+- Microsoft strongly supports web authentication with Entra ID, MSAL, and Microsoft Graph when official Microsoft identity is required
 - Microsoft Graph integrations should follow delegated permissions, least privilege, and throttling-aware retries
 - Expo now has first-class monorepo support with `pnpm`, which makes a future mobile app compatible with a shared web/mobile repository structure
-- Native mobile Microsoft auth needs an early proof of concept, so the web application should be the first production target and the backend API should remain platform-neutral
+- Mobile-friendly web authentication should be validated before native apps exist, and the backend API should remain platform-neutral
 
 ## MCP recommendations
 
@@ -178,7 +193,7 @@ This repository now has a small implemented application stack.
 - Workspace orchestration: `turborepo`
 - Web app: `apps/web` with Next.js App Router and TypeScript
 - Shared packages: `packages/types`, `packages/config`
-- Auth foundation: Auth.js with Microsoft Entra ID provider and App Router route handlers
+- Auth direction: local-first app-managed auth with minimal retained data
 
 Available root commands:
 
@@ -212,10 +227,10 @@ Current automated checks:
 
 Current auth guidance for this repository:
 
-- use Microsoft Entra ID through standard OAuth 2.0 / OpenID Connect
-- redirect users to Microsoft login at `login.microsoftonline.com`; do not attempt to reuse Office cookies
-- store `collox` session state in an encrypted HttpOnly app-owned cookie until a database-backed session strategy is introduced
-- do not claim live sign-in works unless the Entra app registration values are configured and tested
+- prefer local-first auth that stores the least amount of user data practical
+- keep session state in secure app-owned cookies
+- keep any auth UX simple enough for mobile-web use
+- only use Microsoft Entra ID if the user explicitly reintroduces official Microsoft 365 identity requirements
 
 If agents add application code or tooling, they should also add and run the smallest relevant validation for that stack, such as:
 

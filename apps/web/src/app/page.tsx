@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth";
 import {
   architectureSlices,
   dashboardModules,
@@ -7,14 +6,12 @@ import {
   launchpadSystems,
   productPrinciples,
 } from "@collox/types";
-
-import { authOptions } from "@/auth";
-import { SignInButton, SignOutButton } from "@/components/auth-controls";
-import { isMicrosoftAuthConfigured } from "@/lib/auth-env";
+import { SignOutButton } from "@/components/auth-buttons";
+import { getSession } from "@/lib/session";
 import styles from "./page.module.css";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   return (
     <div className={styles.page}>
@@ -40,8 +37,6 @@ export default async function Home() {
                 </Link>
                 <SignOutButton className={styles.plainButton} label="Sign out" />
               </div>
-            ) : isMicrosoftAuthConfigured ? (
-              <SignInButton className={styles.loginButton} label="Log in" />
             ) : (
               <Link className={styles.loginButton} href="/login">
                 Log in
@@ -55,9 +50,9 @@ export default async function Home() {
             <p className={styles.eyebrow}>Initial web implementation</p>
             <h1>One authenticated hub for UNSW student systems.</h1>
             <p className={styles.lead}>
-              collox starts as a web-first home for Microsoft 365 identity,
-              dashboard summaries, and launch-first integrations that students
-              can trust.
+              collox starts as a web-first home with local, app-managed
+              authentication, summary-first modules, and launch-first
+              integrations that students can trust on desktop and mobile web.
             </p>
             <div className={styles.ctas}>
               <a className={styles.primary} href="#launchpad">
@@ -87,9 +82,9 @@ export default async function Home() {
           <aside className={styles.heroPanel}>
             <span className={styles.panelLabel}>Why this first slice exists</span>
             <p className={styles.panelSummary}>
-              The product needs a clear editorial home before it grows into
-              sign-in, Graph data, and launch integrations. This first pass
-              makes the direction legible.
+              The product needs a clear editorial home and lightweight auth
+              before it grows into deeper integrations. This first pass keeps
+              the direction legible and the stored data minimal.
             </p>
             <span className={styles.panelLabel}>First repository slices</span>
             <ul className={styles.sliceList}>
@@ -113,7 +108,7 @@ export default async function Home() {
             <p className={styles.sectionLead}>
               Instead of pretending every student system can be deeply integrated
               from day one, the first dashboard focuses on concise, high-signal
-              summaries.
+              summaries that still read well on phones.
             </p>
           </div>
           <div className={styles.cardGrid}>
@@ -167,7 +162,8 @@ export default async function Home() {
             <h2>Implementation choices stay aligned with the product intent.</h2>
             <p className={styles.sectionLead}>
               The codebase is small, but the rules already point toward safer
-              Microsoft 365 integrations and a reusable monorepo structure.
+              local auth, minimal retained data, and a reusable monorepo
+              structure.
             </p>
           </div>
           <div className={styles.principles}>
@@ -186,7 +182,8 @@ export default async function Home() {
             <h2>These answers unlock the next implementation steps.</h2>
             <p className={styles.sectionLead}>
               Once these decisions are settled, the next slice can move from a
-              framed concept into real authentication and personalized content.
+              framed concept into stronger personalization without over-collecting
+              student data.
             </p>
           </div>
           <ol className={styles.questionList}>

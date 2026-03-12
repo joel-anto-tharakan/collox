@@ -1,19 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 
-import { authOptions } from "@/auth";
-import { SignOutButton } from "@/components/auth-controls";
+import { SignOutButton } from "@/components/auth-buttons";
+import { getSession } from "@/lib/session";
 import styles from "./page.module.css";
 
 const nextSlices = [
   "Profile and identity summary",
-  "Calendar overview from Microsoft 365",
-  "Quick launch links for core UNSW systems",
+  "Pinned launch links for high-frequency student systems",
+  "Passkey or magic-link authentication once the next auth layer is added",
 ];
 
 export default async function HubPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   if (!session?.user) {
     redirect("/login");
@@ -28,23 +27,23 @@ export default async function HubPage() {
           collox.
         </h1>
         <p className={styles.lead}>
-          This first authenticated screen proves the app can recognize the
-          signed-in Microsoft identity and keep that state in a secure app-owned
+          This first authenticated screen proves the app can keep a signed-in
+          state locally with minimal retained data and a secure app-owned
           session.
         </p>
 
         <dl className={styles.identityCard}>
           <div>
             <dt>Name</dt>
-            <dd>{session.user.name ?? "Not provided by Microsoft"}</dd>
+            <dd>{session.user.name ?? "Not provided"}</dd>
           </div>
           <div>
             <dt>Email</dt>
-            <dd>{session.user.email ?? "Not provided by Microsoft"}</dd>
+            <dd>{session.user.email ?? "Not provided"}</dd>
           </div>
           <div>
             <dt>Session storage</dt>
-            <dd>Encrypted HttpOnly Auth.js session cookie</dd>
+            <dd>Secure app-owned Better Auth session cookie</dd>
           </div>
         </dl>
 

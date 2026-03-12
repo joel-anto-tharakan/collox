@@ -58,24 +58,24 @@ export const architectureSlices: ArchitectureSlice[] = [
 export const dashboardModules: DashboardModule[] = [
   {
     slug: "identity",
-    title: "Identity snapshot",
+    title: "Account snapshot",
     description:
-      "Show the signed-in student's basic profile once delegated Microsoft auth is available.",
-    scope: "Profile and sign-in are the first Microsoft 365 feature to validate.",
+      "Show the signed-in student's basic profile with the minimum account data needed to run the app.",
+    scope: "Start with local auth and a simple session-aware profile area.",
   },
   {
     slug: "calendar",
-    title: "Calendar summary",
+    title: "Study rhythm",
     description:
-      "Highlight upcoming classes, meetings, and assessment windows in one strip.",
-    scope: "Use Microsoft Graph with minimal delegated scopes and incremental consent.",
+      "Highlight upcoming classes, deadlines, and routines in one mobile-friendly strip.",
+    scope: "Keep it useful even before any deep institutional integration exists.",
   },
   {
     slug: "priority-inbox",
-    title: "Priority inbox",
+    title: "Priority updates",
     description:
-      "Surface unread counts and key academic messages without replacing Outlook.",
-    scope: "Stay summary-first before pulling full mailbox content into the product.",
+      "Surface the most relevant academic reminders without becoming a full communications system.",
+    scope: "Favor concise summaries and user-controlled storage over large synced datasets.",
   },
   {
     slug: "quick-links",
@@ -139,9 +139,9 @@ export const launchpadSystems: LaunchpadSystem[] = [
 
 export const productPrinciples: Principle[] = [
   {
-    title: "Least privilege first",
+    title: "Store the minimum",
     detail:
-      "Use delegated Microsoft permissions, incremental consent, and the smallest practical Graph scope.",
+      "Keep auth and session data small, and avoid persisting student productivity data unless a feature truly needs it.",
   },
   {
     title: "Launch before deep integration",
@@ -149,14 +149,14 @@ export const productPrinciples: Principle[] = [
       "Prefer reliable SSO launch paths or deep links until a system exposes a supported API.",
   },
   {
+    title: "Mobile web first",
+    detail:
+      "Make authentication and navigation feel good on phones before native apps exist.",
+  },
+  {
     title: "Shared contracts from day one",
     detail:
       "Keep domain types and content outside the web app so future mobile and backend work can reuse them.",
-  },
-  {
-    title: "Validate assumptions explicitly",
-    detail:
-      "Treat third-party compatibility, tenant permissions, and branding constraints as discovery items.",
   },
 ];
 
@@ -166,14 +166,14 @@ export const discoveryQuestions: DiscoveryQuestion[] = [
     prompt: "Which UNSW systems matter most in the first version?",
   },
   {
-    id: "entra-registration",
+    id: "auth-method",
     prompt:
-      "Do you have access to create or approve a Microsoft Entra app registration for this project?",
+      "Which local-first auth method should graduate past this first implementation: passkeys, magic links, or both?",
   },
   {
-    id: "m365-scope",
+    id: "data-retention",
     prompt:
-      "Which Microsoft 365 features belong in v1: profile, mail, calendar, files, Teams, or a smaller subset?",
+      "What is the smallest amount of user data the product can retain while still being useful?",
   },
   {
     id: "third-party",
