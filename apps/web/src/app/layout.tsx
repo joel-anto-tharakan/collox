@@ -20,7 +20,7 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   title: "collox | UNSW student hub",
   description:
-    "An initial web-first UNSW student hub focused on Microsoft 365 sign-in, dashboard summaries, and launchpad integrations.",
+    "An initial web-first UNSW student hub with local app-managed sign-in, minimal retained data, and honest launchpad planning for future integrations.",
 };
 
 export default function RootLayout({

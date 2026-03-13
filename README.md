@@ -56,7 +56,7 @@ Storage strategy:
 
 - `pnpm lint`
 - `pnpm typecheck`
-- `pnpm test`
+- `pnpm test` (currently validates shared launchpad/content contracts in `packages/types`)
 - `pnpm build`
 
 ## Current product framing
@@ -65,7 +65,7 @@ The first screen intentionally stays honest about scope:
 
 - local auth is implemented first so the public project stays lightweight
 - dashboard modules are summary-first
-- launchpad integrations are classified as assumptions to validate
+- launchpad integrations are tracked in a register with auth, SSO, terms, and delivery assumptions
 - discovery questions are surfaced directly in the UI
 
 ## Next implementation priorities
