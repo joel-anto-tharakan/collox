@@ -232,25 +232,28 @@ These questions should be resolved early because they affect architecture and pe
 
 This repository now has a small implemented application stack.
 
-- Package manager: `pnpm`
+- Package manager: `pnpm` (version pinned in root `package.json` via `packageManager` field)
 - Workspace orchestration: `turborepo`
-- Web app: `apps/web` with Next.js App Router and TypeScript
+- Web app: `apps/web` with Next.js 16 App Router and TypeScript
 - Shared packages: `packages/types`, `packages/config`
-- Auth direction: local-first app-managed auth with minimal retained data
-- UX direction: simple, clear flows for non-technical users on mobile and desktop
+- Auth: Better Auth with local SQLite via Node.js built-in `node:sqlite` (requires Node 22+)
 
-Available root commands:
+Available root commands (see `README.md` for full details):
 
-1. `pnpm install`
-2. `pnpm dev`
-3. `pnpm lint`
-4. `pnpm typecheck`
-5. `pnpm test`
-6. `pnpm build`
+1. `pnpm install` — install workspace dependencies
+2. `pnpm dev` — start the Next.js dev server (port 3000)
+3. `pnpm lint` — ESLint across workspace via turbo
+4. `pnpm typecheck` — TypeScript type-checking across workspace via turbo
+5. `pnpm test` — vitest tests in `packages/types` via turbo
+6. `pnpm build` — production build of `apps/web` via turbo
 
-Auth-specific environment file:
+### Cloud environment caveats
 
-- `apps/web/.env.local` based on `apps/web/.env.example`
+- **pnpm build script approvals**: The VM snapshot includes `/home/ubuntu/.config/pnpm/rc` which whitelists build scripts for `@prisma/client`, `better-sqlite3`, `esbuild`, `sharp`, and `unrs-resolver`. Without this, `pnpm install` silently skips native builds and the app will fail to bundle. The update script re-creates this file to stay robust if the snapshot is reset.
+- **Auth `.env.local`**: The web app needs `apps/web/.env.local` with `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`. If missing, generate one: `openssl rand -base64 32` for the secret, `http://localhost:3000` for the URL. The auth module has a hardcoded fallback secret so the app will still start without `.env.local`, but a real secret is preferred.
+- **Auth migration**: Run `pnpm --filter @collox/web run auth:migrate` once to create the SQLite schema in `apps/web/data/auth.sqlite`. This is idempotent and safe to re-run.
+- **Node.js SQLite warning**: `(node:...) ExperimentalWarning: SQLite is an experimental feature` appears during build and dev. This is harmless and expected on Node 22.
+- **Dev server**: `pnpm dev` starts Next.js on port 3000 via turbo. The process is persistent (turbo `cache: false, persistent: true`).
 
 When the first implementation is created:
 
