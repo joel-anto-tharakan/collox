@@ -284,3 +284,39 @@ export const discoveryQuestions: DiscoveryQuestion[] = [
       "Are there branding, privacy, accessibility, or hosting constraints we should design around now?",
   },
 ];
+
+export const deliveryStatusLabels = {
+  candidate: "Candidate",
+  "validate-next": "Validate next",
+  blocked: "Blocked",
+} as const satisfies Record<DeliveryStatus, string>;
+
+export const integrationModeLabels = {
+  "official-api": "Official API",
+  "entra-sso-launch": "Entra SSO launch",
+  "deep-link": "Deep link",
+  unsupported: "Unsupported",
+} as const satisfies Record<IntegrationMode, string>;
+
+export const apiAvailabilityLabels = {
+  "documented-api": "Documented API",
+  "limited-or-unknown": "Limited or unknown",
+  "no-validated-api": "No validated API",
+} as const satisfies Record<ApiAvailability, string>;
+
+export const ssoCompatibilityLabels = {
+  confirmed: "Confirmed",
+  possible: "Possible",
+  unknown: "Unknown",
+  "not-applicable": "Not applicable",
+} as const satisfies Record<SsoCompatibility, string>;
+
+export const deliveryApproachLabels = {
+  embedded: "Embedded",
+  proxied: "Proxied",
+  "linked-out": "Linked out",
+} as const satisfies Record<DeliveryApproach, string>;
+
+export function getLaunchpadSystemBySlug(slug: string): LaunchpadSystem | undefined {
+  return launchpadSystems.find((system) => system.slug === slug);
+}

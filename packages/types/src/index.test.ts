@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  apiAvailabilityLabels,
   architectureSlices,
   dashboardModules,
+  deliveryApproachLabels,
+  deliveryStatusLabels,
   discoveryQuestions,
+  getLaunchpadSystemBySlug,
+  integrationModeLabels,
   integrationModeGuide,
   launchpadSystems,
+  ssoCompatibilityLabels,
 } from "./index";
 
 describe("shared content", () => {
@@ -51,5 +57,20 @@ describe("shared content", () => {
       expect(system.deliveryApproach.length).toBeGreaterThan(0);
       expect(system.note.length).toBeGreaterThan(0);
     }
+  });
+
+  it("exposes labels for each launchpad classification", () => {
+    for (const system of launchpadSystems) {
+      expect(deliveryStatusLabels[system.deliveryStatus]).toBeTruthy();
+      expect(integrationModeLabels[system.integrationMode]).toBeTruthy();
+      expect(apiAvailabilityLabels[system.apiAvailability]).toBeTruthy();
+      expect(ssoCompatibilityLabels[system.ssoCompatibility]).toBeTruthy();
+      expect(deliveryApproachLabels[system.deliveryApproach]).toBeTruthy();
+    }
+  });
+
+  it("can resolve a launchpad record by slug", () => {
+    expect(getLaunchpadSystemBySlug("moodle")?.name).toBe("Moodle");
+    expect(getLaunchpadSystemBySlug("unknown-system")).toBeUndefined();
   });
 });
