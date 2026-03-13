@@ -1,9 +1,23 @@
-export type DeliveryStatus = "ready-now" | "next-up" | "needs-validation";
+export type DeliveryStatus = "candidate" | "validate-next" | "blocked";
 
 export type IntegrationMode =
   | "official-api"
   | "entra-sso-launch"
-  | "deep-link";
+  | "deep-link"
+  | "unsupported";
+
+export type ApiAvailability =
+  | "documented-api"
+  | "limited-or-unknown"
+  | "no-validated-api";
+
+export type SsoCompatibility =
+  | "confirmed"
+  | "possible"
+  | "unknown"
+  | "not-applicable";
+
+export type DeliveryApproach = "embedded" | "proxied" | "linked-out";
 
 export interface ArchitectureSlice {
   name: string;
@@ -24,7 +38,20 @@ export interface LaunchpadSystem {
   purpose: string;
   deliveryStatus: DeliveryStatus;
   integrationMode: IntegrationMode;
+  apiAvailability: ApiAvailability;
+  authMethod: string;
+  ssoCompatibility: SsoCompatibility;
+  ownerOrSupportContact: string;
+  rateLimits: string;
+  termsConstraints: string;
+  deliveryApproach: DeliveryApproach;
   note: string;
+}
+
+export interface IntegrationModeGuide {
+  mode: IntegrationMode;
+  label: string;
+  summary: string;
 }
 
 export interface DiscoveryQuestion {
@@ -91,49 +118,120 @@ export const launchpadSystems: LaunchpadSystem[] = [
     slug: "myunsw",
     name: "myUNSW",
     purpose: "Core student administration, enrolment, and fee workflows.",
-    deliveryStatus: "needs-validation",
+    deliveryStatus: "candidate",
     integrationMode: "deep-link",
-    note: "Treat as a launch target first and validate SSO options with stakeholders.",
+    apiAvailability: "limited-or-unknown",
+    authMethod: "Existing UNSW student account flow",
+    ssoCompatibility: "possible",
+    ownerOrSupportContact: "UNSW student administration channels",
+    rateLimits: "Unknown until an official interface is confirmed.",
+    termsConstraints:
+      "Treat as an external launch until supported integration guidance exists.",
+    deliveryApproach: "linked-out",
+    note: "Start with a dependable launch path and validate any SSO or API options with stakeholders.",
   },
   {
     slug: "moodle",
     name: "Moodle",
     purpose: "Course materials, activities, and assessment content.",
-    deliveryStatus: "next-up",
+    deliveryStatus: "validate-next",
     integrationMode: "entra-sso-launch",
-    note: "Likely starts as a launcher while API and consent boundaries are confirmed.",
+    apiAvailability: "limited-or-unknown",
+    authMethod: "UNSW single sign-on",
+    ssoCompatibility: "possible",
+    ownerOrSupportContact: "UNSW Moodle support",
+    rateLimits: "Unknown until an official integration surface is selected.",
+    termsConstraints:
+      "Keep the first release as a launcher while consent, support, and API boundaries are reviewed.",
+    deliveryApproach: "linked-out",
+    note: "Likely begins as a launch integration before any deeper coursework data is considered.",
   },
   {
     slug: "outlook",
     name: "Outlook",
     purpose: "Student email and calendar access through Microsoft 365.",
-    deliveryStatus: "ready-now",
+    deliveryStatus: "validate-next",
     integrationMode: "official-api",
-    note: "Profile, mail summary, and calendar are the strongest first-party Graph bets.",
+    apiAvailability: "documented-api",
+    authMethod: "Microsoft Entra ID delegated sign-in",
+    ssoCompatibility: "confirmed",
+    ownerOrSupportContact: "Microsoft 365 and UNSW identity administrators",
+    rateLimits: "Microsoft Graph throttling and Retry-After handling apply.",
+    termsConstraints:
+      "Only request least-privilege delegated scopes when a specific summary feature is in scope.",
+    deliveryApproach: "proxied",
+    note: "Good candidate for future profile, unread count, and calendar summaries, but not implemented today.",
   },
   {
     slug: "teams",
     name: "Microsoft Teams",
     purpose: "Classes, chats, and meeting links.",
-    deliveryStatus: "next-up",
+    deliveryStatus: "candidate",
     integrationMode: "official-api",
-    note: "Start with meeting shortcuts and avoid broad scopes until needed.",
+    apiAvailability: "documented-api",
+    authMethod: "Microsoft Entra ID delegated sign-in",
+    ssoCompatibility: "confirmed",
+    ownerOrSupportContact: "Microsoft 365 and UNSW collaboration support",
+    rateLimits: "Graph rate limits depend on endpoint choice and tenant policy.",
+    termsConstraints:
+      "Avoid broad chat or team scopes until a concrete student-facing feature justifies them.",
+    deliveryApproach: "linked-out",
+    note: "Meeting shortcuts are more realistic than full in-app Teams workflows in the early product.",
   },
   {
     slug: "library",
     name: "UNSW Library",
     purpose: "Search, reserves, and learning support entry points.",
-    deliveryStatus: "needs-validation",
+    deliveryStatus: "candidate",
     integrationMode: "deep-link",
-    note: "Assume an external launch until official APIs and terms are reviewed.",
+    apiAvailability: "limited-or-unknown",
+    authMethod: "Public web access plus any existing institutional login flows",
+    ssoCompatibility: "unknown",
+    ownerOrSupportContact: "UNSW Library support",
+    rateLimits: "Unknown until official APIs or supported feeds are reviewed.",
+    termsConstraints:
+      "Do not assume embeddable access until terms and supported integration paths are confirmed.",
+    deliveryApproach: "linked-out",
+    note: "A low-risk external launch is more credible than a custom integration at this stage.",
   },
   {
     slug: "handbook",
     name: "UNSW Handbook",
     purpose: "Course and program reference material.",
-    deliveryStatus: "ready-now",
+    deliveryStatus: "candidate",
     integrationMode: "deep-link",
-    note: "Good candidate for a low-risk launch integration in the first release.",
+    apiAvailability: "limited-or-unknown",
+    authMethod: "Public web access",
+    ssoCompatibility: "not-applicable",
+    ownerOrSupportContact: "UNSW Handbook owners",
+    rateLimits: "Unknown; treat as a linked destination until supported feeds are confirmed.",
+    termsConstraints:
+      "Prefer a straightforward external launch unless official data access terms are documented.",
+    deliveryApproach: "linked-out",
+    note: "Useful as a launch destination, but the product should not imply a maintained data sync yet.",
+  },
+];
+
+export const integrationModeGuide: IntegrationModeGuide[] = [
+  {
+    mode: "official-api",
+    label: "Official API integration",
+    summary: "Use a supported API only when the feature needs structured data and clear permission boundaries.",
+  },
+  {
+    mode: "entra-sso-launch",
+    label: "Microsoft Entra SSO launch",
+    summary: "Prefer a launcher when institutional sign-in exists but the product does not need to copy data.",
+  },
+  {
+    mode: "deep-link",
+    label: "Deep-link or external launch",
+    summary: "Keep the app useful with safe launch paths when a system is better reached than reimplemented.",
+  },
+  {
+    mode: "unsupported",
+    label: "Unsupported until approval exists",
+    summary: "Block work that lacks legal, technical, or security approval instead of guessing past the constraints.",
   },
 ];
 

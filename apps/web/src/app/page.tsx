@@ -3,12 +3,45 @@ import {
   architectureSlices,
   dashboardModules,
   discoveryQuestions,
+  integrationModeGuide,
   launchpadSystems,
   productPrinciples,
 } from "@collox/types";
 import { SignOutButton } from "@/components/auth-buttons";
 import { getSession } from "@/lib/session";
 import styles from "./page.module.css";
+
+const deliveryStatusLabels = {
+  candidate: "Candidate",
+  "validate-next": "Validate next",
+  blocked: "Blocked",
+} as const;
+
+const integrationModeLabels = {
+  "official-api": "Official API",
+  "entra-sso-launch": "Entra SSO launch",
+  "deep-link": "Deep link",
+  unsupported: "Unsupported",
+} as const;
+
+const apiAvailabilityLabels = {
+  "documented-api": "Documented API",
+  "limited-or-unknown": "Limited or unknown",
+  "no-validated-api": "No validated API",
+} as const;
+
+const ssoCompatibilityLabels = {
+  confirmed: "Confirmed",
+  possible: "Possible",
+  unknown: "Unknown",
+  "not-applicable": "Not applicable",
+} as const;
+
+const deliveryApproachLabels = {
+  embedded: "Embedded",
+  proxied: "Proxied",
+  "linked-out": "Linked out",
+} as const;
 
 export default async function Home() {
   const session = await getSession();
@@ -56,7 +89,7 @@ export default async function Home() {
             </p>
             <div className={styles.ctas}>
               <a className={styles.primary} href="#launchpad">
-                Review launchpad assumptions
+                Review launchpad register
               </a>
               <a className={styles.secondary} href="#questions">
                 Answer discovery questions
@@ -74,7 +107,7 @@ export default async function Home() {
               </div>
               <div>
                 <dt>{discoveryQuestions.length}</dt>
-                <dd>open decisions before auth work</dd>
+                <dd>open decisions before deeper integrations</dd>
               </div>
             </dl>
           </div>
@@ -126,25 +159,61 @@ export default async function Home() {
         <section className={styles.section} id="launchpad">
           <div className={styles.sectionHeading}>
             <p className={styles.kicker}>Launchpad register</p>
-            <h2>These integrations are framed as assumptions to validate.</h2>
+            <h2>Track the real delivery constraints before promising integration depth.</h2>
             <p className={styles.sectionLead}>
-              Some systems may become real API integrations. Others may stay as
-              SSO launchers or deep links. The product should be honest about
-              that split.
+              No launch target below ships as a deep integration today. The
+              register keeps auth method, ownership, SSO fit, rate limits, and
+              terms visible before implementation commitments are made.
             </p>
+          </div>
+          <div className={styles.modeGuide}>
+            {integrationModeGuide.map((entry) => (
+              <article key={entry.mode} className={styles.modeCard}>
+                <p className={styles.cardLabel}>{entry.label}</p>
+                <p>{entry.summary}</p>
+              </article>
+            ))}
           </div>
           <div className={styles.systemGrid}>
             {launchpadSystems.map((system) => (
               <article key={system.slug} className={styles.systemCard}>
                 <div className={styles.systemHeader}>
                   <h3>{system.name}</h3>
-                  <span>{system.deliveryStatus}</span>
+                  <span>{deliveryStatusLabels[system.deliveryStatus]}</span>
                 </div>
                 <p>{system.purpose}</p>
                 <dl className={styles.systemMeta}>
                   <div>
                     <dt>Mode</dt>
-                    <dd>{system.integrationMode}</dd>
+                    <dd>{integrationModeLabels[system.integrationMode]}</dd>
+                  </div>
+                  <div>
+                    <dt>API</dt>
+                    <dd>{apiAvailabilityLabels[system.apiAvailability]}</dd>
+                  </div>
+                  <div>
+                    <dt>Auth</dt>
+                    <dd>{system.authMethod}</dd>
+                  </div>
+                  <div>
+                    <dt>SSO</dt>
+                    <dd>{ssoCompatibilityLabels[system.ssoCompatibility]}</dd>
+                  </div>
+                  <div>
+                    <dt>Owner</dt>
+                    <dd>{system.ownerOrSupportContact}</dd>
+                  </div>
+                  <div>
+                    <dt>Rate limits</dt>
+                    <dd>{system.rateLimits}</dd>
+                  </div>
+                  <div>
+                    <dt>Terms</dt>
+                    <dd>{system.termsConstraints}</dd>
+                  </div>
+                  <div>
+                    <dt>Delivery</dt>
+                    <dd>{deliveryApproachLabels[system.deliveryApproach]}</dd>
                   </div>
                   <div>
                     <dt>Note</dt>

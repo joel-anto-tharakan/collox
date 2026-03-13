@@ -4,6 +4,7 @@ import {
   architectureSlices,
   dashboardModules,
   discoveryQuestions,
+  integrationModeGuide,
   launchpadSystems,
 } from "./index";
 
@@ -28,5 +29,27 @@ describe("shared content", () => {
       "packages/types",
       "packages/config",
     ]);
+  });
+
+  it("documents all four launchpad integration classifications", () => {
+    expect(integrationModeGuide.map((entry) => entry.mode)).toEqual([
+      "official-api",
+      "entra-sso-launch",
+      "deep-link",
+      "unsupported",
+    ]);
+  });
+
+  it("keeps launchpad register fields populated for every system", () => {
+    for (const system of launchpadSystems) {
+      expect(system.apiAvailability.length).toBeGreaterThan(0);
+      expect(system.authMethod.length).toBeGreaterThan(0);
+      expect(system.ssoCompatibility.length).toBeGreaterThan(0);
+      expect(system.ownerOrSupportContact.length).toBeGreaterThan(0);
+      expect(system.rateLimits.length).toBeGreaterThan(0);
+      expect(system.termsConstraints.length).toBeGreaterThan(0);
+      expect(system.deliveryApproach.length).toBeGreaterThan(0);
+      expect(system.note.length).toBeGreaterThan(0);
+    }
   });
 });

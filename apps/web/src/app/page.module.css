@@ -268,6 +268,7 @@
 }
 
 .cardGrid,
+.modeGuide,
 .systemGrid,
 .principles {
   display: grid;
@@ -282,11 +283,16 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.modeGuide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .principles {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .card,
+.modeCard,
 .systemCard,
 .principleCard {
   display: flex;
@@ -308,6 +314,7 @@
 }
 
 .card p,
+.modeCard p,
 .systemCard p,
 .principleCard p,
 .questionList li {
@@ -340,7 +347,8 @@
 
 .systemMeta {
   display: grid;
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
 }
 
 .systemMeta div {
@@ -459,6 +467,7 @@
 
   .signalStrip,
   .cardGrid,
+  .modeGuide,
   .systemGrid,
   .principles {
     grid-template-columns: 1fr;
@@ -471,6 +480,10 @@
   .systemHeader {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .systemMeta {
+    grid-template-columns: 1fr;
   }
 
   .questionList li {
