@@ -1,47 +1,20 @@
 import Link from "next/link";
 import {
+  apiAvailabilityLabels,
   architectureSlices,
   dashboardModules,
+  deliveryStatusLabels,
+  deliveryApproachLabels,
   discoveryQuestions,
   integrationModeGuide,
+  integrationModeLabels,
   launchpadSystems,
   productPrinciples,
+  ssoCompatibilityLabels,
 } from "@collox/types";
 import { SignOutButton } from "@/components/auth-buttons";
 import { getSession } from "@/lib/session";
 import styles from "./page.module.css";
-
-const deliveryStatusLabels = {
-  candidate: "Candidate",
-  "validate-next": "Validate next",
-  blocked: "Blocked",
-} as const;
-
-const integrationModeLabels = {
-  "official-api": "Official API",
-  "entra-sso-launch": "Entra SSO launch",
-  "deep-link": "Deep link",
-  unsupported: "Unsupported",
-} as const;
-
-const apiAvailabilityLabels = {
-  "documented-api": "Documented API",
-  "limited-or-unknown": "Limited or unknown",
-  "no-validated-api": "No validated API",
-} as const;
-
-const ssoCompatibilityLabels = {
-  confirmed: "Confirmed",
-  possible: "Possible",
-  unknown: "Unknown",
-  "not-applicable": "Not applicable",
-} as const;
-
-const deliveryApproachLabels = {
-  embedded: "Embedded",
-  proxied: "Proxied",
-  "linked-out": "Linked out",
-} as const;
 
 export default async function Home() {
   const session = await getSession();
@@ -57,7 +30,7 @@ export default async function Home() {
           <div className={styles.topActions}>
             <nav className={styles.topNav} aria-label="Page sections">
               <a href="#modules">Modules</a>
-              <a href="#launchpad">Launchpad</a>
+              <Link href="/launchpad">Launchpad</Link>
               <a href="#questions">Questions</a>
             </nav>
             {session?.user ? (
@@ -88,9 +61,9 @@ export default async function Home() {
               integrations that students can trust on desktop and mobile web.
             </p>
             <div className={styles.ctas}>
-              <a className={styles.primary} href="#launchpad">
+              <Link className={styles.primary} href="/launchpad">
                 Review launchpad register
-              </a>
+              </Link>
               <a className={styles.secondary} href="#questions">
                 Answer discovery questions
               </a>
@@ -161,10 +134,18 @@ export default async function Home() {
             <p className={styles.kicker}>Launchpad register</p>
             <h2>Track the real delivery constraints before promising integration depth.</h2>
             <p className={styles.sectionLead}>
-              No launch target below ships as a deep integration today. The
-              register keeps auth method, ownership, SSO fit, rate limits, and
-              terms visible before implementation commitments are made.
+              The register now lives beyond the homepage. Every launch target has
+              a stable record URL, and the same shared data is exposed through a
+              read-only JSON endpoint for agent-friendly access.
             </p>
+          </div>
+          <div className={styles.launchpadActions}>
+            <Link className={styles.secondary} href="/launchpad">
+              Open full register
+            </Link>
+            <Link className={styles.secondary} href="/api/launchpad">
+              Read launchpad JSON
+            </Link>
           </div>
           <div className={styles.modeGuide}>
             {integrationModeGuide.map((entry) => (
@@ -220,6 +201,9 @@ export default async function Home() {
                     <dd>{system.note}</dd>
                   </div>
                 </dl>
+                <Link className={styles.systemLink} href={`/launchpad/${system.slug}`}>
+                  Open {system.name} record
+                </Link>
               </article>
             ))}
           </div>

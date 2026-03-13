@@ -135,8 +135,15 @@
   gap: 14px;
 }
 
+.launchpadActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .primary,
-.secondary {
+.secondary,
+.systemLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -158,6 +165,13 @@
 }
 
 .secondary {
+  background: transparent;
+  color: #1c1a17;
+}
+
+.systemLink {
+  width: fit-content;
+  margin-top: auto;
   background: transparent;
   color: #1c1a17;
 }
@@ -397,12 +411,14 @@
 @media (hover: hover) and (pointer: fine) {
   .primary:hover,
   .secondary:hover,
+  .systemLink:hover,
   .loginButton:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 32px rgba(28, 26, 23, 0.08);
   }
 
   .secondary:hover,
+  .systemLink:hover,
   .topNav a:hover {
     color: var(--accent);
   }

@@ -16,6 +16,14 @@ The current web app is an initial product-direction landing page with a
 local-first authentication foundation. It does not yet include backend APIs,
 deep third-party integrations, or Microsoft Graph data fetching.
 
+The launchpad register now also has stable web routes and a read-only JSON
+surface:
+
+- `/launchpad`: full launchpad register
+- `/launchpad/[slug]`: stable record URL for each tracked system
+- `/api/launchpad`: machine-readable register output
+- `/api/launchpad/[slug]`: machine-readable output for a single system record
+
 ## Getting started
 
 Prerequisites:
@@ -65,7 +73,7 @@ The first screen intentionally stays honest about scope:
 
 - local auth is implemented first so the public project stays lightweight
 - dashboard modules are summary-first
-- launchpad integrations are tracked in a register with auth, SSO, terms, and delivery assumptions
+- launchpad integrations are tracked in a register with stable URLs, JSON output, auth, SSO, terms, and delivery assumptions
 - discovery questions are surfaced directly in the UI
 
 ## Next implementation priorities
