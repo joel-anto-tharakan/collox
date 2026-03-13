@@ -3,7 +3,7 @@
 ## Repository overview
 
 - Repository name: `collox`
-- Product direction: build a local-first UNSW student hub with a clean, simple web experience for phones and laptops first, then expand to Android and iOS apps
+- Product direction: build a local-first UNSW student hub with a clean, simple web experience for phones and laptops first, then expand to Android and iOS apps, while ensuring the website is also usable by software agents and agentic harnesses
 - Primary users: students of the University of New South Wales (UNSW)
 - Preferred v1 identity direction: local-first app-managed auth with minimal stored data and most user data remaining under the student's control
 - Goal: provide one clean, simple authenticated hub where a student can view and launch the different systems, information sources, and services they use
@@ -11,7 +11,7 @@
 
 ## Product intent
 
-The product should become an integrated, local-first student hub for UNSW. The website comes first and should be the primary experience on both phones and laptops. Native mobile apps can come later, but the architecture should be chosen so the mobile apps can reuse business logic, data models, API contracts, and design decisions as much as practical.
+The product should become an integrated, local-first student hub for UNSW. The website comes first and should be the primary experience on both phones and laptops. It should also be designed so software agents can reliably traverse pages, discover important information, and complete clearly permitted tasks. Native mobile apps can come later, but the architecture should be chosen so the mobile apps can reuse business logic, data models, API contracts, and design decisions as much as practical.
 
 The product should optimize for:
 
@@ -19,6 +19,7 @@ The product should optimize for:
 - keeping students in control of most of their own data and connected accounts
 - clean, simple flows that work for non-technical users
 - responsive, accessible experiences that feel first-class on mobile and desktop
+- predictable, machine-readable information architecture that works well for agents and agentic harnesses
 
 The hub should support:
 
@@ -35,6 +36,24 @@ The hub should support:
 - Prefer simple, low-friction experiences over feature-dense workflows that assume technical expertise.
 - Design every primary flow to work well on both phones and laptops.
 - Use clear language, obvious actions, and minimal setup wherever possible.
+- Treat agent usability as a first-class website quality attribute alongside human usability, accessibility, and performance.
+
+## Agent-first website guidance
+
+The website should be designed for both humans and software agents. Human users remain the primary audience, but agents should be able to traverse the product, understand its structure, and access intentionally exposed information without relying on brittle reverse engineering. This includes browser-driving agents, retrieval agents, and agentic harnesses such as OpenClaw-style systems.
+
+Implementation guidance:
+
+1. Prefer stable URLs for important destinations, views, and records so agents can revisit and reference pages reliably.
+2. Use semantic HTML, meaningful headings, landmarks, labels, and descriptive link text so page structure is understandable from the DOM alone.
+3. Ensure important content is present in the rendered HTML where practical instead of being hidden behind fragile client-only interactions.
+4. Avoid making key information depend on hover-only controls, unlabeled icons, canvas-only rendering, or deeply nested interaction chains.
+5. Prefer predictable navigation, form behavior, loading states, and success or error messaging so agents can infer page state safely.
+6. Expose structured data and machine-readable interfaces when appropriate, such as well-shaped JSON responses, metadata, feeds, or documented internal APIs for intentionally shareable information.
+7. Keep permissions explicit. Agent-friendly design does not mean bypassing authentication, authorization, rate limits, robots policies, or product safety controls.
+8. Design authenticated flows so approved automation can work through secure, delegated, app-controlled mechanisms rather than password sharing or brittle session hacks.
+9. Preserve accessibility best practices because accessible structure usually also improves machine traversal and agent reliability.
+10. When adding new features, ask both: "is this clear for a human student?" and "is this easy for an agent to discover, parse, and act on correctly?"
 
 ## Product assumptions and scope boundaries
 
@@ -160,6 +179,8 @@ For this repository's current direction:
 - prefer low-friction mobile-friendly methods such as passkeys or magic links over password-heavy flows when practical
 - prioritize clean, simple interfaces that non-technical students can understand without training
 - reduce setup steps, technical language, and configuration burden wherever possible
+- ensure key website information and actions are discoverable through stable navigation, semantic markup, and predictable page states for both humans and agents
+- prefer pages and APIs that expose intentionally shareable information in machine-readable formats when this improves legitimate agent access
 
 ## Research findings that should guide implementation
 
@@ -266,6 +287,7 @@ Do not claim commands exist until they are actually configured in the repository
 For future implementation work:
 
 - web UI changes should be tested in a browser on mobile-width and desktop-width layouts
+- web UI changes should also be checked for semantic structure, stable headings and landmarks, and whether key information remains discoverable to browser-driving agents
 - auth and Microsoft Graph changes should be validated with the smallest possible set of scopes
 - core user flows should be checked for clarity and simplicity, not only technical correctness
 - mobile support should not be claimed until validated in an emulator, simulator, or device workflow
